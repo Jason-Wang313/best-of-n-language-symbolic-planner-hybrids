@@ -1,0 +1,19 @@
+{
+  "preset": "smoke",
+  "seeds": 24,
+  "ns": [
+    1,
+    2,
+    4,
+    8,
+    16,
+    32
+  ],
+  "max_n": 32,
+  "symbolic_bon_utility_at_max_n": 16.454166666666666,
+  "symbolic_bon_loophole_at_max_n": 1.0,
+  "simulator_bon_utility_at_max_n": 16.4,
+  "adversarial_gate_utility_at_max_n": 84.6,
+  "uncertainty_lcb_utility_at_max_n": 84.6,
+  "best_repair_at_max_n": "calibrated_bon"
+}
