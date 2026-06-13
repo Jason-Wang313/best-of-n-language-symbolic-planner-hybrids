@@ -2,11 +2,11 @@
 
 ## Main Thesis
 
-Best-of-N selection in language-planner / symbolic-planner hybrids can concentrate rare semantic-symbolic loopholes: plans that satisfy a symbolic checker or surrogate simulator while failing hidden execution semantics.
+Proxy-ranked candidate selection in language-planner / symbolic-planner hybrids can concentrate rare semantic-symbolic loopholes: plans that satisfy a symbolic checker or surrogate simulator while failing hidden execution semantics.
 
 ## Genuine Novelty
 
-The first-pass novelty is mechanism-level, not architectural. Prior work covers LLM-to-PDDL translation, language agents, tool use, affordance filtering, verifier reranking, and reward hacking. This repo isolates the specific finite-N selection pressure created when language-generated plans are compiled into symbolic actions, scored by a checker/simulator, and then judged by a stricter executor.
+The first-pass novelty is mechanism-level, not architectural. Prior work covers LLM-to-PDDL translation, language agents, tool use, affordance filtering, verifier reranking, and reward hacking. This repo isolates the specific finite-pool selection pressure created when language-generated plans are compiled into symbolic actions, scored by a checker/simulator, and then judged by a stricter executor.
 
 ## Literature Coverage
 
@@ -19,19 +19,19 @@ The repo includes:
 
 ## Proof Status
 
-The formal claim is a simple two-type finite-N proposition. If loopholes occur independently with probability `p > 0`, every loophole receives higher proxy score than every grounded candidate, and loopholes have lower true utility, then proxy Best-of-N selects a loophole with probability `1 - (1-p)^N`, so expected true utility decreases monotonically to the loophole utility. The proof is exact under those assumptions and intentionally narrow.
+The formal claim is a simple two-type finite-pool proposition. If loopholes occur independently with probability `p > 0`, every loophole receives higher proxy score than every grounded candidate, and loopholes have lower true utility, then top-proxy selection chooses a loophole with probability `1 - (1-p)^N`, so expected true utility decreases monotonically to the loophole utility. The proof is exact under those assumptions and intentionally narrow.
 
 ## Strongest Empirical Result
 
-In the full local run at `N=128`, symbolic Best-of-N and simulator Best-of-N both select loophole plans 100.0% of the time and have mean true utility `15.9`, while the repaired selectors reach mean true utility `84.6`.
+In the full local run at `N=128`, symbolic-proxy and simulator-proxy selectors both select loophole plans 100.0% of the time and have mean true utility `15.9`, while the repaired selectors reach mean true utility `84.6`.
 
 ## Strongest Diagnostic Result
 
-The clearest diagnostic is selected loophole occupancy: symbolic/simulator Best-of-N rise to 100.0% selected loopholes, and the mean proxy-true gap for symbolic Best-of-N at `N=128` is `109.828`.
+The clearest diagnostic is selected loophole occupancy: symbolic/simulator proxy selection rises to 100.0% selected loopholes, and the mean proxy-true gap for symbolic-proxy selection at `N=128` is `109.828`.
 
 ## Strongest Repair Result
 
-The controlled repairs `calibrated_bon`, `adversarial_gate`, and `uncertainty_lcb` all reach 100.0% execution success and 0.0% loophole occupancy at `N=128` in this toy setting.
+The controlled repairs `calibrated_boundary`, `adversarial_gate`, and `uncertainty_lcb` all reach 100.0% execution success and 0.0% loophole occupancy at `N=128` in this toy setting.
 
 ## Biggest Weaknesses
 
@@ -43,7 +43,7 @@ The controlled repairs `calibrated_bon`, `adversarial_gate`, and `uncertainty_lc
 
 ## Paper-Readiness Judgment
 
-Paper-worthy v1 as a controlled mechanism submission draft. The PDF is anonymous and uses the official-style `iclr2027_conference.sty` template with `\iclrfinalcopy` commented out. It is not benchmark-complete or deployment-ready.
+Paper-worthy v2 as a controlled mechanism submission draft. The PDF is anonymous and uses the official-style `iclr2027_conference.sty` template with `\iclrfinalcopy` commented out. It is not benchmark-complete or deployment-ready.
 
 ## Verification
 
@@ -54,7 +54,7 @@ Paper-worthy v1 as a controlled mechanism submission draft. The PDF is anonymous
 
 ## Final PDF Path
 
-`C:\Users\wangz\Downloads\best-of-n-language-symbolic-planner-hybrids.pdf`
+`C:\Users\wangz\OneDrive\Desktop\best-of-n-language-symbolic-planner-hybrids-v2.pdf`
 
 ## GitHub Repo URL
 

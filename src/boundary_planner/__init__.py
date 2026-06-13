@@ -1,4 +1,4 @@
-"""Best-of-N language/symbolic planning hybrids."""
+"""Symbolic-boundary audits for language/symbolic planning hybrids."""
 
 from .domain import Plan, TaskSpec, TASKS, compile_plan
 from .checking import symbolic_check

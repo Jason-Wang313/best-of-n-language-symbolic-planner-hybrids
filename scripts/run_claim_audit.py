@@ -27,12 +27,12 @@ def main() -> None:
     summary = pd.read_csv(summary_path)
     max_n = int(summary["n"].max())
     at_max = summary[summary["n"] == max_n].set_index("strategy")
-    symbolic = at_max.loc["symbolic_bon"]
-    simulator = at_max.loc["simulator_bon"]
+    symbolic = at_max.loc["symbolic_proxy"]
+    simulator = at_max.loc["simulator_proxy"]
     adv = at_max.loc["adversarial_gate"]
     lcb = at_max.loc["uncertainty_lcb"]
     best_repair_name = (
-        at_max.loc[["calibrated_bon", "adversarial_gate", "uncertainty_lcb"], "mean_true_utility"].idxmax()
+        at_max.loc[["calibrated_boundary", "adversarial_gate", "uncertainty_lcb"], "mean_true_utility"].idxmax()
     )
     best_repair = at_max.loc[best_repair_name]
 
@@ -41,17 +41,17 @@ def main() -> None:
         "max_n": max_n,
         "claim_boundary": "controlled synthetic language/symbolic planner domains only",
         "supported": {
-            "symbolic_bon_concentrates_loopholes": bool(symbolic["loophole_rate"] >= 0.9),
-            "simulator_bon_concentrates_loopholes": bool(simulator["loophole_rate"] >= 0.9),
+            "symbolic_proxy_concentrates_loopholes": bool(symbolic["loophole_rate"] >= 0.9),
+            "simulator_proxy_concentrates_loopholes": bool(simulator["loophole_rate"] >= 0.9),
             "repairs_reduce_loopholes": bool(best_repair["loophole_rate"] <= 0.1),
             "repairs_restore_execution_success": bool(best_repair["success_rate"] >= 0.9),
         },
         "numbers": {
-            "symbolic_bon_true_utility": round(float(symbolic["mean_true_utility"]), 3),
-            "symbolic_bon_loophole_rate": pct(float(symbolic["loophole_rate"])),
-            "symbolic_bon_proxy_true_gap": round(float(symbolic["mean_proxy_true_gap"]), 3),
-            "simulator_bon_true_utility": round(float(simulator["mean_true_utility"]), 3),
-            "simulator_bon_loophole_rate": pct(float(simulator["loophole_rate"])),
+            "symbolic_proxy_true_utility": round(float(symbolic["mean_true_utility"]), 3),
+            "symbolic_proxy_loophole_rate": pct(float(symbolic["loophole_rate"])),
+            "symbolic_proxy_proxy_true_gap": round(float(symbolic["mean_proxy_true_gap"]), 3),
+            "simulator_proxy_true_utility": round(float(simulator["mean_true_utility"]), 3),
+            "simulator_proxy_loophole_rate": pct(float(simulator["loophole_rate"])),
             "adversarial_gate_true_utility": round(float(adv["mean_true_utility"]), 3),
             "uncertainty_lcb_true_utility": round(float(lcb["mean_true_utility"]), 3),
             "best_repair": str(best_repair_name),

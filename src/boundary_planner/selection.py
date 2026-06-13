@@ -51,9 +51,9 @@ def select_plan(pool: Sequence[Plan], strategy: str, seed: int = 0) -> Selection
         return select_random_valid(pool, seed)
     scorers: Dict[str, Callable[[Plan], float]] = {
         "language_prior": language_prior_score,
-        "symbolic_bon": symbolic_proxy_score,
-        "simulator_bon": simulator_score,
-        "calibrated_bon": calibrated_score,
+        "symbolic_proxy": symbolic_proxy_score,
+        "simulator_proxy": simulator_score,
+        "calibrated_boundary": calibrated_score,
         "adversarial_gate": adversarial_gate_score,
         "uncertainty_lcb": uncertainty_lcb_score,
     }
@@ -66,9 +66,9 @@ def select_plan(pool: Sequence[Plan], strategy: str, seed: int = 0) -> Selection
 STRATEGIES = [
     "random_valid",
     "language_prior",
-    "symbolic_bon",
-    "simulator_bon",
-    "calibrated_bon",
+    "symbolic_proxy",
+    "simulator_proxy",
+    "calibrated_boundary",
     "adversarial_gate",
     "uncertainty_lcb",
 ]

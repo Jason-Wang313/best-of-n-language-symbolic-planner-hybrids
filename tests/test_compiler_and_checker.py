@@ -1,6 +1,6 @@
-from bon_symbolic.checking import symbolic_check
-from bon_symbolic.domain import compile_plan
-from bon_symbolic.execution import execute_true
+from boundary_planner.checking import symbolic_check
+from boundary_planner.domain import compile_plan
+from boundary_planner.execution import execute_true
 
 
 def test_robust_plan_is_symbolically_and_truly_valid():

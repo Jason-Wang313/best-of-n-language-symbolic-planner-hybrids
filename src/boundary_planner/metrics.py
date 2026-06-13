@@ -1,4 +1,4 @@
-"""Diagnostics for Best-of-N language/symbolic planner hybrids."""
+"""Diagnostics for symbolic-boundary audits in language planner hybrids."""
 
 from __future__ import annotations
 

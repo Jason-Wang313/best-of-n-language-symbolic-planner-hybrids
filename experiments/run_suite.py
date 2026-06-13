@@ -1,4 +1,4 @@
-"""Run controlled Best-of-N language/symbolic planner experiments."""
+"""Run controlled symbolic-boundary planner experiments."""
 
 from __future__ import annotations
 
@@ -14,9 +14,9 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from bon_symbolic import STRATEGIES, TASKS, select_plan
-from bon_symbolic.generator import generate_pool
-from bon_symbolic.metrics import plan_record, pool_diagnostics
+from boundary_planner import STRATEGIES, TASKS, select_plan
+from boundary_planner.generator import generate_pool
+from boundary_planner.metrics import plan_record, pool_diagnostics
 
 
 def parse_ns(value: str) -> List[int]:
@@ -83,9 +83,9 @@ def save_figures(summary: pd.DataFrame, df: pd.DataFrame, fig_dir: Path) -> None
     colors = {
         "random_valid": "#737373",
         "language_prior": "#8c6bb1",
-        "symbolic_bon": "#de2d26",
-        "simulator_bon": "#fd8d3c",
-        "calibrated_bon": "#3182bd",
+        "symbolic_proxy": "#de2d26",
+        "simulator_proxy": "#fd8d3c",
+        "calibrated_boundary": "#3182bd",
         "adversarial_gate": "#31a354",
         "uncertainty_lcb": "#006d2c",
     }
@@ -102,11 +102,11 @@ def save_figures(summary: pd.DataFrame, df: pd.DataFrame, fig_dir: Path) -> None
     plt.xscale("log", base=2)
     plt.xlabel("candidate budget N")
     plt.ylabel("selected plan true utility")
-    plt.title("Best-of-N scaling under semantic-symbolic mismatch")
+    plt.title("Candidate-pool scaling under semantic-symbolic mismatch")
     plt.grid(True, alpha=0.25)
     plt.legend(fontsize=8, ncol=2)
     plt.tight_layout()
-    plt.savefig(fig_dir / "figure1_best_of_n_collapse.png", dpi=220)
+    plt.savefig(fig_dir / "figure1_boundary_collapse.png", dpi=220)
     plt.close()
 
     plt.figure(figsize=(7.2, 4.4))
@@ -170,9 +170,9 @@ def save_figures(summary: pd.DataFrame, df: pd.DataFrame, fig_dir: Path) -> None
     order = [
         "random_valid",
         "language_prior",
-        "symbolic_bon",
-        "simulator_bon",
-        "calibrated_bon",
+        "symbolic_proxy",
+        "simulator_proxy",
+        "calibrated_boundary",
         "adversarial_gate",
         "uncertainty_lcb",
     ]
@@ -212,13 +212,13 @@ def write_json_summary(summary: pd.DataFrame, out_dir: Path, preset: str, seeds:
         "seeds": seeds,
         "ns": ns,
         "max_n": max_n,
-        "symbolic_bon_utility_at_max_n": float(at_max.loc["symbolic_bon", "mean_true_utility"]),
-        "symbolic_bon_loophole_at_max_n": float(at_max.loc["symbolic_bon", "loophole_rate"]),
-        "simulator_bon_utility_at_max_n": float(at_max.loc["simulator_bon", "mean_true_utility"]),
+        "symbolic_proxy_utility_at_max_n": float(at_max.loc["symbolic_proxy", "mean_true_utility"]),
+        "symbolic_proxy_loophole_at_max_n": float(at_max.loc["symbolic_proxy", "loophole_rate"]),
+        "simulator_proxy_utility_at_max_n": float(at_max.loc["simulator_proxy", "mean_true_utility"]),
         "adversarial_gate_utility_at_max_n": float(at_max.loc["adversarial_gate", "mean_true_utility"]),
         "uncertainty_lcb_utility_at_max_n": float(at_max.loc["uncertainty_lcb", "mean_true_utility"]),
         "best_repair_at_max_n": str(
-            at_max.loc[["calibrated_bon", "adversarial_gate", "uncertainty_lcb"], "mean_true_utility"].idxmax()
+            at_max.loc[["calibrated_boundary", "adversarial_gate", "uncertainty_lcb"], "mean_true_utility"].idxmax()
         ),
     }
     (out_dir / "summary.json").write_text(json.dumps(payload, indent=2), encoding="utf-8")

@@ -83,8 +83,8 @@ def uncertainty_lcb_score(plan: Plan) -> float:
 SCORERS = {
     "language_prior": language_prior_score,
     "symbolic_proxy": symbolic_proxy_score,
-    "simulator": simulator_score,
-    "calibrated": calibrated_score,
+    "simulator_proxy": simulator_score,
+    "calibrated_boundary": calibrated_score,
     "adversarial_gate": adversarial_gate_score,
     "uncertainty_lcb": uncertainty_lcb_score,
 }

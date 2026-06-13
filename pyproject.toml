@@ -3,9 +3,9 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "bon-symbolic"
+name = "planner-boundary-audit"
 version = "0.1.0"
-description = "Controlled Best-of-N experiments for language/symbolic planner hybrids."
+description = "Controlled symbolic-boundary audits for language/symbolic planner hybrids."
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [

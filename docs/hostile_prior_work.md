@@ -8,13 +8,13 @@ a checker/simulator/verifier, and then judged by a hidden executor whose semanti
 
 - Link: https://arxiv.org/abs/2304.11477
 - Reviewer attack: This already combines language models, planning, and external evaluation.
-- Why it does not subsume this project: Closest architectural ancestor; it does not study Best-of-N selection pressure over verifier-compatible loopholes.
+- Why it does not subsume this project: Closest architectural ancestor; it does not study candidate-pool selection pressure over verifier-compatible loopholes.
 
 ## 2. Tree of Thoughts: Deliberate Problem Solving with Large Language Models
 
 - Link: https://arxiv.org/abs/2305.10601
 - Reviewer attack: This already combines language models, planning, and external evaluation.
-- Why it does not subsume this project: Relevant Best-of-N/search ancestor; it is not about symbolic planners or execution-validity collapse.
+- Why it does not subsume this project: Relevant candidate-search ancestor; it is not about symbolic planners or execution-validity collapse.
 
 ## 3. Self-Consistency Improves Chain of Thought Reasoning in Language Models
 
@@ -68,5 +68,5 @@ a checker/simulator/verifier, and then judged by a hidden executor whose semanti
 
 The hostile set motivates a modest contribution. The paper should not claim that symbolic verification is bad,
 that LLM planning is broadly unsafe, or that the repair is general. It can claim a controlled, reproducible
-failure mode: proxy-optimal Best-of-N selection over language-generated symbolic plans can make execution
+failure mode: proxy-optimal candidate selection over language-generated symbolic plans can make execution
 validity worse as N grows when loophole plans have higher verifier score than grounded plans.

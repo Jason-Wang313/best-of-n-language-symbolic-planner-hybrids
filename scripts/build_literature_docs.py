@@ -27,7 +27,7 @@ CURATED: List[Dict[str, object]] = [
         "contribution": "translates natural-language tasks into PDDL, delegates planning to a symbolic solver, and translates plans back",
         "relevance": 5,
         "threat": "high",
-        "why": "Closest architectural ancestor; it does not study Best-of-N selection pressure over verifier-compatible loopholes.",
+        "why": "Closest architectural ancestor; it does not study candidate-pool selection pressure over verifier-compatible loopholes.",
     },
     {
         "title": "ReAct: Synergizing Reasoning and Acting in Language Models",
@@ -49,7 +49,7 @@ CURATED: List[Dict[str, object]] = [
         "contribution": "combines language-model scores with affordance values for robot skill selection",
         "relevance": 4,
         "threat": "medium",
-        "why": "Uses an external feasibility signal, but the paper's central issue is not Best-of-N over feasible-but-semantically-wrong plans.",
+        "why": "Uses an external feasibility signal, but the paper's central issue is not proxy-ranked selection over feasible-but-semantically-wrong plans.",
     },
     {
         "title": "Inner Monologue: Embodied Reasoning through Planning with Language Models",
@@ -82,7 +82,7 @@ CURATED: List[Dict[str, object]] = [
         "contribution": "builds an autonomous Minecraft agent with curriculum, skill library, and iterative prompting",
         "relevance": 3,
         "threat": "low",
-        "why": "Emphasizes open-ended skill acquisition, not verifier-induced Best-of-N collapse.",
+        "why": "Emphasizes open-ended skill acquisition, not verifier-induced proxy-selection collapse.",
     },
     {
         "title": "Reflexion: Language Agents with Verbal Reinforcement Learning",
@@ -104,7 +104,7 @@ CURATED: List[Dict[str, object]] = [
         "contribution": "searches over language reasoning states using evaluation and branching",
         "relevance": 4,
         "threat": "medium",
-        "why": "Relevant Best-of-N/search ancestor; it is not about symbolic planners or execution-validity collapse.",
+        "why": "Relevant candidate-search ancestor; it is not about symbolic planners or execution-validity collapse.",
     },
     {
         "title": "Self-Consistency Improves Chain of Thought Reasoning in Language Models",
@@ -137,7 +137,7 @@ CURATED: List[Dict[str, object]] = [
         "contribution": "proposes routing LLMs to symbolic and external modules",
         "relevance": 3,
         "threat": "low",
-        "why": "Broad architecture motivation, not a Best-of-N mechanism paper.",
+        "why": "Broad architecture motivation, not a boundary-selection mechanism paper.",
     },
     {
         "title": "WebGPT: Browser-assisted question-answering with human feedback",
@@ -203,7 +203,7 @@ QUERIES = [
     'all:"language model" AND all:"PDDL"',
     'all:"LLM" AND all:"planning" AND all:"verification"',
     'all:"language agent" AND all:"execution feedback"',
-    'all:"best-of-n" AND all:"language model"',
+    'all:"best" AND all:"of" AND all:"n" AND all:"language model"',
     'all:"reward hacking" AND all:"language model"',
     'all:"neuro-symbolic" AND all:"planning"',
     'all:"robot planning" AND all:"language model"',
@@ -363,7 +363,7 @@ CSV contains {len(rows)} entries, satisfying the requested 100-paper landscape s
 ## 100-Paper Sweep Takeaways
 
 - LLM+classical-planning work typically asks whether language can translate, repair, or call a planner; it rarely treats candidate multiplicity as a statistical pressure that changes the selected plan distribution.
-- Agent and robotics papers often add feedback or affordance filters, but the filter is usually treated as a safety improvement rather than a surface that Best-of-N can exploit.
+- Agent and robotics papers often add feedback or affordance filters, but the filter is usually treated as a safety improvement rather than a surface that proxy-ranked selection can exploit.
 - Reward-model and verifier-hacking papers give the closest general warning: optimizing a proxy at inference time can expose misspecification. The symbolic-planner hybrid setting adds a discrete validity boundary and a separate hidden executor.
 - Neuro-symbolic systems motivate the architecture, but the local contribution is narrower: a measurable semantic-symbolic mismatch law and diagnostics for selected plans.
 
@@ -379,7 +379,7 @@ CSV contains {len(rows)} entries, satisfying the requested 100-paper landscape s
 
 The broad literature already covers LLM-to-planner translation, embodied language agents, self-correction,
 external-tool use, and reward-model overoptimization. The most defensible first-pass contribution is therefore
-not another planner wrapper. It is the mechanism-level claim that, in language/symbolic hybrids, Best-of-N
+not another planner wrapper. It is the mechanism-level claim that, in language/symbolic hybrids, proxy-ranked candidate selection
 can monotonically concentrate rare plans that satisfy the symbolic interface while violating hidden execution
 semantics. This survives the prior-work pass because it is architecture-specific, testable, and repairable.
 """
@@ -412,7 +412,7 @@ a checker/simulator/verifier, and then judged by a hidden executor whose semanti
 
 The hostile set motivates a modest contribution. The paper should not claim that symbolic verification is bad,
 that LLM planning is broadly unsafe, or that the repair is general. It can claim a controlled, reproducible
-failure mode: proxy-optimal Best-of-N selection over language-generated symbolic plans can make execution
+failure mode: proxy-optimal candidate selection over language-generated symbolic plans can make execution
 validity worse as N grows when loophole plans have higher verifier score than grounded plans.
 """
     (DOCS / "hostile_prior_work.md").write_text(textwrap.dedent(text).strip() + "\n", encoding="utf-8")
@@ -423,7 +423,7 @@ def write_novelty_decision(rows: List[Dict[str, object]]) -> None:
 
 ## Chosen Angle
 
-**Semantic-symbolic loophole concentration.** In a language/symbolic planner hybrid, Best-of-N selection
+**Semantic-symbolic loophole concentration.** In a language/symbolic planner hybrid, proxy-ranked candidate selection
 can increase symbolic or simulator score while decreasing true execution utility because the selected candidate
 distribution becomes dominated by rare plans that exploit the abstraction boundary.
 
@@ -437,17 +437,17 @@ safety points. The unoccupied slot is a small mechanism paper for this specific 
 2. compiler/checker maps text to symbolic actions,
 3. verifier/simulator scores or validates the candidates,
 4. execution has hidden semantics absent from the symbolic state,
-5. Best-of-N amplifies the rare candidate type with the highest proxy score.
+5. Proxy-ranked selection amplifies the rare candidate type with the highest proxy score.
 
 ## Formal Claim Kept
 
 If loophole candidates occur independently with probability p>0, every loophole receives a higher proxy score
-than every grounded candidate, and loopholes have lower true utility, then the probability that proxy Best-of-N
+than every grounded candidate, and loopholes have lower true utility, then the probability that top-proxy selection
 selects a loophole is 1-(1-p)^N and the expected true utility monotonically decreases to the loophole utility.
 
 ## Empirical Claim Kept
 
-In the toy domains, symbolic and simulator Best-of-N should show rising selected-loophole occupancy and a
+In the toy domains, symbolic and simulator proxy selectors should show rising selected-loophole occupancy and a
 growing proxy-true gap as N increases. Repairs are allowed to claim only controlled evidence: semantic
 uncertainty penalties and adversarial execution gates reduce the mismatch in these domains.
 
