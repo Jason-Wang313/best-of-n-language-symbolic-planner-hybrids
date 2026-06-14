@@ -8,6 +8,8 @@ from pathlib import Path
 import sys
 from typing import Iterable, List
 
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import pandas as pd
 

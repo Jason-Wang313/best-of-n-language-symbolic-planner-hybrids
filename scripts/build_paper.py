@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import shutil
 import subprocess
+import json
 from pathlib import Path
 
 import pandas as pd
@@ -14,7 +15,8 @@ PAPER = ROOT / "paper"
 DESKTOP = Path.home() / "OneDrive" / "Desktop"
 if not DESKTOP.exists():
     DESKTOP = Path.home() / "Desktop"
-FINAL_PDF = DESKTOP / "best-of-n-language-symbolic-planner-hybrids-v2.pdf"
+DESKTOP_PDF = DESKTOP / "best-of-n-language-symbolic-planner-hybrids-v3.pdf"
+REPO_FINAL = PAPER / "final" / "best-of-n-language-symbolic-planner-hybrids-v3.pdf"
 
 
 def macro(name: str, value: str) -> str:
@@ -58,6 +60,21 @@ def write_result_macros() -> None:
     text += macro("BestRepairUtility", f"{float(best_repair['mean_true_utility']):.1f}")
     text += macro("BestRepairSuccess", f"{100.0 * float(best_repair['success_rate']):.1f}\\%")
     text += macro("BestRepairLoophole", f"{100.0 * float(best_repair['loophole_rate']):.1f}\\%")
+    expansion_claims = ROOT / "results" / "expansion" / "claims.json"
+    if expansion_claims.exists():
+        claims = json.loads(expansion_claims.read_text(encoding="utf-8"))
+        numbers = claims["key_numbers"]
+        text += macro("VThreeMaxN", str(numbers["max_n"]))
+        text += macro("VThreeSymbolicUtility", f"{float(numbers['symbolic_proxy_utility']):.1f}")
+        text += macro("VThreeSymbolicLoophole", f"{100.0 * float(numbers['symbolic_proxy_loophole']):.1f}\\%")
+        text += macro("VThreeSymbolicSuccess", f"{100.0 * float(numbers['symbolic_proxy_success']):.1f}\\%")
+        text += macro("VThreeSimulatorUtility", f"{float(numbers['simulator_proxy_utility']):.1f}")
+        text += macro("VThreeAdversarialUtility", f"{float(numbers['adversarial_gate_utility']):.1f}")
+        text += macro("VThreeLCBUtility", f"{float(numbers['uncertainty_lcb_utility']):.1f}")
+        text += macro("VThreeRarePriorLoophole", f"{100.0 * float(numbers['rare_prior_symbolic_loophole']):.1f}\\%")
+        text += macro("VThreeStrictSuccess", f"{100.0 * float(numbers['strict_boundary_success']):.1f}\\%")
+        text += macro("VThreeProxyAdvantage", f"{float(numbers['loophole_proxy_advantage']):.1f}")
+        text += macro("VThreeGroundedAdvantage", f"{float(numbers['grounded_utility_advantage']):.1f}")
     (PAPER / "results_macros.tex").write_text(text, encoding="utf-8")
 
 
@@ -85,8 +102,10 @@ def run_latex() -> Path:
             if pdf.exists():
                 local_pdf = PAPER / "best-of-n-language-symbolic-planner-hybrids.pdf"
                 shutil.copy2(pdf, local_pdf)
-                shutil.copy2(pdf, FINAL_PDF)
-                return FINAL_PDF
+                REPO_FINAL.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(pdf, REPO_FINAL)
+                shutil.copy2(pdf, DESKTOP_PDF)
+                return DESKTOP_PDF
         except subprocess.CalledProcessError as exc:
             errors.append(f"{' '.join(command)}\nSTDOUT:\n{exc.stdout}\nSTDERR:\n{exc.stderr}")
     failure = ROOT / "docs" / "paper_build_failure.md"

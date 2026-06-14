@@ -1,0 +1,14 @@
+{
+  "mode": "full",
+  "max_n": 512,
+  "budget_seeds": 32,
+  "stress_seeds": 16,
+  "candidate_seeds": 16,
+  "figures": [
+    "figure5_budget_512.png",
+    "figure6_loophole_prior.png",
+    "figure7_repair_ablation.png",
+    "figure8_proxy_calibration.png",
+    "figure9_checker_executor_gap.png"
+  ]
+}

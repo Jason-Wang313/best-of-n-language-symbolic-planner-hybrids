@@ -2,59 +2,90 @@
 
 ## Main Thesis
 
-Proxy-ranked candidate selection in language-planner / symbolic-planner hybrids can concentrate rare semantic-symbolic loopholes: plans that satisfy a symbolic checker or surrogate simulator while failing hidden execution semantics.
+Proxy-ranked candidate selection in language-planner / symbolic-planner hybrids
+can concentrate rare boundary loopholes: plans that satisfy a symbolic checker
+or surrogate simulator while failing hidden execution semantics.
 
-## Genuine Novelty
+## V3 Novelty
 
-The first-pass novelty is mechanism-level, not architectural. Prior work covers LLM-to-PDDL translation, language agents, tool use, affordance filtering, verifier reranking, and reward hacking. This repo isolates the specific finite-pool selection pressure created when language-generated plans are compiled into symbolic actions, scored by a checker/simulator, and then judged by a stricter executor.
+The v3 paper is no longer a short mechanism wrapper. It is framed as a
+boundary-contract audit for language-to-symbolic planning: plans that pass the
+interface but do not execute. The central contribution is the audit protocol and
+evidence package around compiler loss, checker visibility, simulator fidelity,
+selected-tail calibration, and hidden-executor evaluation.
 
 ## Literature Coverage
 
 The repo includes:
 
 - `docs/related_work_matrix.csv` with 120 entries.
-- `docs/literature_map.md` with the 100-paper sweep, 30-paper serious skim set, and 20-25-paper deep-read threat set.
+- `docs/literature_map.md` with the 100-paper sweep, 30-paper serious skim set,
+  and 20-25-paper deep-read threat set.
 - `docs/hostile_prior_work.md` with 10 hostile prior-work threats.
-- `docs/novelty_decision.md` documenting why the semantic-symbolic loophole concentration angle was chosen.
+- `docs/novelty_decision.md` documenting why the semantic-symbolic loophole
+  concentration angle was chosen.
 
 ## Proof Status
 
-The formal claim is a simple two-type finite-pool proposition. If loopholes occur independently with probability `p > 0`, every loophole receives higher proxy score than every grounded candidate, and loopholes have lower true utility, then top-proxy selection chooses a loophole with probability `1 - (1-p)^N`, so expected true utility decreases monotonically to the loophole utility. The proof is exact under those assumptions and intentionally narrow.
+The formal claim is a narrow two-type finite-pool proposition. If loopholes
+occur independently with probability `p > 0`, every loophole receives higher
+proxy score than every grounded candidate, and loopholes have lower true
+utility, then top-proxy selection chooses a loophole with probability
+`1 - (1-p)^N`, so expected true utility decreases monotonically to the loophole
+utility. The proof is exact under those assumptions and is not used to claim
+universal verifier failure.
 
-## Strongest Empirical Result
+## V3 Empirical Result
 
-In the full local run at `N=128`, symbolic-proxy and simulator-proxy selectors both select loophole plans 100.0% of the time and have mean true utility `15.9`, while the repaired selectors reach mean true utility `84.6`.
+The expansion suite raises the stress budget to `N=512`. At that budget,
+symbolic-proxy and simulator-proxy selectors both reach true utility `15.9`,
+execution success `0.0%`, and selected-loophole rate `100.0%`. Boundary-aware
+controls recover utility `84.6` in the controlled domains.
 
-## Strongest Diagnostic Result
+## V3 Diagnostic Result
 
-The clearest diagnostic is selected loophole occupancy: symbolic/simulator proxy selection rises to 100.0% selected loopholes, and the mean proxy-true gap for symbolic-proxy selection at `N=128` is `109.828`.
+Candidate-level diagnostics show a selected-tail mismatch: proxy-high plans are
+not hidden-utility-high plans. Across the expansion candidate pool, the proxy /
+true Spearman correlation is low, and the exported failure cases show paperwork,
+service-elevator, and simulator-lure plans passing the interface while failing
+execution semantics.
 
-## Strongest Repair Result
+## V3 Repair Result
 
-The controlled repairs `calibrated_boundary`, `adversarial_gate`, and `uncertainty_lcb` all reach 100.0% execution success and 0.0% loophole occupancy at `N=128` in this toy setting.
+Single-feature repairs are insufficient in the ablation suite. Penalties aimed
+only at marks or shortcuts leave failure modes active, while packing penalties,
+full-boundary penalties, strict-boundary proxies, adversarial gates, and
+uncertainty lower-confidence selection recover execution success in the
+synthetic domains.
 
-## Biggest Weaknesses
+## Biggest Remaining Weaknesses
 
-- The domains are synthetic and intentionally small.
+- The domains are synthetic and intentionally controlled.
 - The language generator is stochastic templates, not a frontier LLM.
 - The simulator and hidden executor are handcrafted to expose the mechanism.
-- The repairs use privileged knowledge of the abstraction gap.
-- The result should not be generalized to deployed robotics or arbitrary verifiers without new evidence.
+- The repairs use controlled knowledge of the abstraction gap.
+- The result should not be generalized to deployed robotics, arbitrary symbolic
+  verifiers, or production tool-use systems without new domain evidence.
 
-## Paper-Readiness Judgment
+## Submission-Readiness Judgment
 
-Paper-worthy v2 as a controlled mechanism submission draft. The PDF is anonymous and uses the official-style `iclr2027_conference.sty` template with `\iclrfinalcopy` commented out. It is not benchmark-complete or deployment-ready.
+Submission-ready v3 as a controlled mechanism and audit-protocol paper. The
+manuscript is a 25-page anonymous PDF with substantial experiments, figures,
+appendices, failure-case exports, and a local claim audit that rejects stale
+short builds.
 
 ## Verification
 
-- `pytest`: 6 passed.
-- Full experiment: `python -m experiments.run_suite --preset full`.
-- Claim audit: `python scripts/run_claim_audit.py --preset full`.
-- Paper build: `python scripts/build_paper.py`.
+- `python -m pytest -q`: 9 passed.
+- `python -m compileall src tests experiments scripts -q`: passed.
+- Expansion experiment: `python experiments\run_expansion_suite.py --mode full --output results\expansion`.
+- Claim audit: `python scripts\run_claim_audit.py`.
+- Paper build: `python scripts\build_paper.py`.
+- Final PDF page count: 25 pages.
 
 ## Final PDF Path
 
-`C:\Users\wangz\OneDrive\Desktop\best-of-n-language-symbolic-planner-hybrids-v2.pdf`
+`C:\Users\wangz\OneDrive\Desktop\best-of-n-language-symbolic-planner-hybrids-v3.pdf`
 
 ## GitHub Repo URL
 

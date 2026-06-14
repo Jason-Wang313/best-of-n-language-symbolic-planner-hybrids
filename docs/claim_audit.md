@@ -1,15 +1,38 @@
 # Claim Audit
 
-Preset: `full`. Max N: `128`.
+Version: `v3`. Baseline preset: `full`. Baseline max N: `128`. Expansion max N: `512`.
 
-## Supported
+## V3 Expansion Checks
+
+- symbolic_proxy_collapses_at_512: True
+- simulator_proxy_collapses_at_512: True
+- repairs_restore_execution: True
+- rare_loopholes_are_amplified: True
+- strict_boundary_control_recovers: True
+- proxy_tail_mismatch_visible: True
+
+## V3 Key Numbers
+
+- max_n: 512
+- symbolic_proxy_utility: 15.9
+- symbolic_proxy_loophole: 1.0
+- symbolic_proxy_success: 0.0
+- simulator_proxy_utility: 15.9
+- adversarial_gate_utility: 84.6
+- uncertainty_lcb_utility: 84.6
+- rare_prior_symbolic_loophole: 1.0
+- strict_boundary_success: 1.0
+- loophole_proxy_advantage: 68.987
+- grounded_utility_advantage: 60.61
+
+## Baseline Supported Checks
 
 - symbolic_proxy_concentrates_loopholes: True
 - simulator_proxy_concentrates_loopholes: True
 - repairs_reduce_loopholes: True
 - repairs_restore_execution_success: True
 
-## Key Numbers
+## Baseline Key Numbers
 
 - symbolic_proxy_true_utility: 15.9
 - symbolic_proxy_loophole_rate: 100.0%
@@ -29,3 +52,9 @@ Preset: `full`. Max N: `128`.
 - claims about arbitrary external verifiers
 - claims that symbolic planning is intrinsically unsafe
 - claims that semantic uncertainty penalties are a complete solution
+
+## Final PDF Targets
+
+- repository: `C:\Users\wangz\Downloads\best-of-n-language-symbolic-planner-hybrids\paper\final\best-of-n-language-symbolic-planner-hybrids-v3.pdf`
+- desktop: `C:\Users\wangz\OneDrive\Desktop\best-of-n-language-symbolic-planner-hybrids-v3.pdf`
+- minimum pages: 25

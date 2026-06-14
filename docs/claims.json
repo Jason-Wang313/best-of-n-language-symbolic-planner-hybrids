@@ -1,4 +1,5 @@
 {
+  "version": "v3",
   "preset": "full",
   "max_n": 128,
   "claim_boundary": "controlled synthetic language/symbolic planner domains only",
@@ -26,5 +27,30 @@
     "claims about arbitrary external verifiers",
     "claims that symbolic planning is intrinsically unsafe",
     "claims that semantic uncertainty penalties are a complete solution"
-  ]
+  ],
+  "v3_expansion": {
+    "mode": "full",
+    "claim_pass": true,
+    "checks": {
+      "symbolic_proxy_collapses_at_512": true,
+      "simulator_proxy_collapses_at_512": true,
+      "repairs_restore_execution": true,
+      "rare_loopholes_are_amplified": true,
+      "strict_boundary_control_recovers": true,
+      "proxy_tail_mismatch_visible": true
+    },
+    "key_numbers": {
+      "max_n": 512,
+      "symbolic_proxy_utility": 15.9,
+      "symbolic_proxy_loophole": 1.0,
+      "symbolic_proxy_success": 0.0,
+      "simulator_proxy_utility": 15.9,
+      "adversarial_gate_utility": 84.6,
+      "uncertainty_lcb_utility": 84.6,
+      "rare_prior_symbolic_loophole": 1.0,
+      "strict_boundary_success": 1.0,
+      "loophole_proxy_advantage": 68.987,
+      "grounded_utility_advantage": 60.61
+    }
+  }
 }

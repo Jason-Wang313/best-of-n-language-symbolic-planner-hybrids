@@ -9,14 +9,17 @@ hybrids:
 
 The contribution is intentionally scoped: a finite-pool mechanism proposition,
 controlled toy domains, diagnostics for semantic-symbolic mismatch, and repair
-baselines based on semantic uncertainty and adversarial execution gates.
+baselines based on semantic uncertainty, strict boundary controls, and
+adversarial execution gates. The v3 package expands the evidence to high-budget
+candidate-pool stress at `N=512`, loophole-prior sweeps, repair ablations,
+candidate-level calibration, and failure-case exports.
 
 ## Quickstart
 
 ```powershell
 cd "$HOME\Downloads\best-of-n-language-symbolic-planner-hybrids"
 python -m pip install -e .
-pytest
+python -m pytest -q
 .\scripts\run_smoke.ps1
 ```
 
@@ -24,12 +27,17 @@ For the full local evidence package and PDF:
 
 ```powershell
 .\scripts\run_all.ps1
+python experiments\run_expansion_suite.py --mode full --output results\expansion
+python scripts\build_paper.py
+python scripts\run_claim_audit.py
 ```
 
-The final v2 paper PDF is copied to:
+The final v3 paper PDF is copied to both the repository and the visible
+Desktop:
 
 ```text
-C:\Users\wangz\OneDrive\Desktop\best-of-n-language-symbolic-planner-hybrids-v2.pdf
+paper\final\best-of-n-language-symbolic-planner-hybrids-v3.pdf
+C:\Users\wangz\OneDrive\Desktop\best-of-n-language-symbolic-planner-hybrids-v3.pdf
 ```
 
 ## What Is Implemented
@@ -44,18 +52,22 @@ C:\Users\wangz\OneDrive\Desktop\best-of-n-language-symbolic-planner-hybrids-v2.p
   confidence bounds.
 - Diagnostics for selected-plan utility, proxy-true gap, checker-valid but
   semantically bad plans, loophole occupancy, and candidate-budget scaling.
+- A v3 expansion suite with `N=512` stress, rare-loophole priors, strict
+  checker controls, repair ablations, proxy calibration, and selected failure
+  cases.
 
 ## Repo Layout
 
 - `src/boundary_planner/`: domains, compiler, checker, executor, scoring,
   selection, and finite-pool law.
-- `experiments/`: reproducible suite for smoke/full experiments.
+- `experiments/`: reproducible suite for smoke/full experiments plus the v3
+  expansion suite.
 - `scripts/`: literature build, smoke/full runs, claim audit, paper build.
 - `tests/`: parser, checker/executor mismatch, deterministic selection, and
   diagnostic tests.
 - `docs/`: literature map, hostile prior work, novelty decision, related-work
   matrix, claim/final audits.
-- `figures/`: generated paper figures.
+- `figures/`: generated paper figures, including v3 expansion plots.
 - `results/`: generated CSV/JSON experiment outputs.
 - `paper/`: anonymous ICLR-style paper source.
 
@@ -75,4 +87,7 @@ The repo supports controlled-mechanism claims only. It does not claim robotics
 validation, universal verifier failure, or a general safety fix. The strongest
 supported statement is that, in these language/symbolic hybrid domains, proxy
 selection over larger candidate pools amplifies semantic-symbolic boundary
-loopholes, while repair gates reduce that controlled mismatch.
+loopholes, while boundary-aware repair gates reduce that controlled mismatch.
+At `N=512`, symbolic and simulator proxy selection both collapse to hidden
+execution utility `15.9` with selected-loophole rate `100.0%`, while the
+boundary-aware controls recover utility `84.6` in this synthetic setting.
