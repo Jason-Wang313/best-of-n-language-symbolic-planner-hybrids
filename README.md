@@ -10,9 +10,10 @@ hybrids:
 The contribution is intentionally scoped: a finite-pool mechanism proposition,
 controlled toy domains, diagnostics for semantic-symbolic mismatch, and repair
 baselines based on semantic uncertainty, strict boundary controls, and
-adversarial execution gates. The v3 package expands the evidence to high-budget
+adversarial execution gates. The v4 package expands the evidence to high-budget
 candidate-pool stress at `N=512`, loophole-prior sweeps, repair ablations,
-candidate-level calibration, and failure-case exports.
+candidate-level calibration, failure-case exports, and a standard Gymnasium
+FrozenLake-v1 hidden-execution benchmark tier.
 
 ## Quickstart
 
@@ -28,16 +29,17 @@ For the full local evidence package and PDF:
 ```powershell
 .\scripts\run_all.ps1
 python experiments\run_expansion_suite.py --mode full --output results\expansion
+python -m experiments.run_frozenlake_benchmark
 python scripts\build_paper.py
 python scripts\run_claim_audit.py
 ```
 
-The final v3 paper PDF is copied to both the repository and the visible
+The final v4 paper PDF is copied to both the repository and the visible
 Desktop:
 
 ```text
-paper\final\best-of-n-language-symbolic-planner-hybrids-v3.pdf
-C:\Users\wangz\OneDrive\Desktop\best-of-n-language-symbolic-planner-hybrids-v3.pdf
+paper\final\best-of-n-language-symbolic-planner-hybrids-v4.pdf
+C:\Users\wangz\OneDrive\Desktop\best-of-n-language-symbolic-planner-hybrids-v4.pdf
 ```
 
 ## What Is Implemented
@@ -52,23 +54,27 @@ C:\Users\wangz\OneDrive\Desktop\best-of-n-language-symbolic-planner-hybrids-v3.p
   confidence bounds.
 - Diagnostics for selected-plan utility, proxy-true gap, checker-valid but
   semantically bad plans, loophole occupancy, and candidate-budget scaling.
-- A v3 expansion suite with `N=512` stress, rare-loophole priors, strict
+- A v4 expansion suite with `N=512` stress, rare-loophole priors, strict
   checker controls, repair ablations, proxy calibration, and selected failure
   cases.
+- A standard FrozenLake-v1 benchmark tier where coarse symbolic reachability
+  ignores holes but hidden environment execution does not.
 
 ## Repo Layout
 
 - `src/boundary_planner/`: domains, compiler, checker, executor, scoring,
   selection, and finite-pool law.
-- `experiments/`: reproducible suite for smoke/full experiments plus the v3
-  expansion suite.
+- `experiments/`: reproducible suite for smoke/full experiments plus the v4
+  expansion and FrozenLake benchmark suites.
 - `scripts/`: literature build, smoke/full runs, claim audit, paper build.
 - `tests/`: parser, checker/executor mismatch, deterministic selection, and
   diagnostic tests.
 - `docs/`: literature map, hostile prior work, novelty decision, related-work
   matrix, claim/final audits.
-- `figures/`: generated paper figures, including v3 expansion plots.
+- `figures/`: generated paper figures, including v4 expansion plots.
 - `results/`: generated CSV/JSON experiment outputs.
+- `results/frozenlake_benchmark/`: standard-environment benchmark outputs and
+  claim gates.
 - `paper/`: anonymous ICLR-style paper source.
 
 ## Paper
@@ -91,3 +97,6 @@ loopholes, while boundary-aware repair gates reduce that controlled mismatch.
 At `N=512`, symbolic and simulator proxy selection both collapse to hidden
 execution utility `15.9` with selected-loophole rate `100.0%`, while the
 boundary-aware controls recover utility `84.6` in this synthetic setting.
+On FrozenLake-v1, symbolic proxy selection drops from hidden utility `40.1` at
+`N=1` to `0.0` at `N=128` with `100.0%` hole entry, while the hazard-aware gate
+recovers utility `93.0` and `100.0%` success.

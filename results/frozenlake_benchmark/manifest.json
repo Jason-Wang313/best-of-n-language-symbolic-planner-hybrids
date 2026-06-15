@@ -1,0 +1,14 @@
+{
+  "benchmark": "FrozenLake-v1",
+  "map_name": "8x8",
+  "is_slippery": false,
+  "seeds": 160,
+  "budgets": [
+    1,
+    4,
+    16,
+    64,
+    128
+  ],
+  "claim_pass": true
+}

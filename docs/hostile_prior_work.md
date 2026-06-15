@@ -69,4 +69,6 @@ a checker/simulator/verifier, and then judged by a hidden executor whose semanti
 The hostile set motivates a modest contribution. The paper should not claim that symbolic verification is bad,
 that LLM planning is broadly unsafe, or that the repair is general. It can claim a controlled, reproducible
 failure mode: proxy-optimal candidate selection over language-generated symbolic plans can make execution
-validity worse as N grows when loophole plans have higher verifier score than grounded plans.
+validity worse as N grows when loophole plans have higher verifier score than grounded plans. The v4
+FrozenLake tier strengthens external validity by reproducing the same boundary-contract failure on a standard
+Gymnasium environment, but it still does not replace trained language-planner or robotics evidence.

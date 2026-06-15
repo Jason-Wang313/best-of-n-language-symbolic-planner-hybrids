@@ -30,6 +30,10 @@ In the toy domains, symbolic and simulator proxy selectors should show rising se
 growing proxy-true gap as N increases. Repairs are allowed to claim only controlled evidence: semantic
 uncertainty penalties and adversarial execution gates reduce the mismatch in these domains.
 
+The v4 empirical scope also includes a standard FrozenLake-v1 hidden-execution tier. It is not a leaderboard
+claim; it is a benchmark check that a coarse symbolic reachability certificate can be invalid under environment
+dynamics that include holes.
+
 ## Claims Rejected
 
 - No claim of real-world robotics validation.

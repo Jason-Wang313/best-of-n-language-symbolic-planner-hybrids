@@ -15,8 +15,8 @@ PAPER = ROOT / "paper"
 DESKTOP = Path.home() / "OneDrive" / "Desktop"
 if not DESKTOP.exists():
     DESKTOP = Path.home() / "Desktop"
-DESKTOP_PDF = DESKTOP / "best-of-n-language-symbolic-planner-hybrids-v3.pdf"
-REPO_FINAL = PAPER / "final" / "best-of-n-language-symbolic-planner-hybrids-v3.pdf"
+DESKTOP_PDF = DESKTOP / "best-of-n-language-symbolic-planner-hybrids-v4.pdf"
+REPO_FINAL = PAPER / "final" / "best-of-n-language-symbolic-planner-hybrids-v4.pdf"
 
 
 def macro(name: str, value: str) -> str:
@@ -64,17 +64,33 @@ def write_result_macros() -> None:
     if expansion_claims.exists():
         claims = json.loads(expansion_claims.read_text(encoding="utf-8"))
         numbers = claims["key_numbers"]
-        text += macro("VThreeMaxN", str(numbers["max_n"]))
-        text += macro("VThreeSymbolicUtility", f"{float(numbers['symbolic_proxy_utility']):.1f}")
-        text += macro("VThreeSymbolicLoophole", f"{100.0 * float(numbers['symbolic_proxy_loophole']):.1f}\\%")
-        text += macro("VThreeSymbolicSuccess", f"{100.0 * float(numbers['symbolic_proxy_success']):.1f}\\%")
-        text += macro("VThreeSimulatorUtility", f"{float(numbers['simulator_proxy_utility']):.1f}")
-        text += macro("VThreeAdversarialUtility", f"{float(numbers['adversarial_gate_utility']):.1f}")
-        text += macro("VThreeLCBUtility", f"{float(numbers['uncertainty_lcb_utility']):.1f}")
-        text += macro("VThreeRarePriorLoophole", f"{100.0 * float(numbers['rare_prior_symbolic_loophole']):.1f}\\%")
-        text += macro("VThreeStrictSuccess", f"{100.0 * float(numbers['strict_boundary_success']):.1f}\\%")
-        text += macro("VThreeProxyAdvantage", f"{float(numbers['loophole_proxy_advantage']):.1f}")
-        text += macro("VThreeGroundedAdvantage", f"{float(numbers['grounded_utility_advantage']):.1f}")
+        text += macro("StressMaxN", str(numbers["max_n"]))
+        text += macro("StressSymbolicUtility", f"{float(numbers['symbolic_proxy_utility']):.1f}")
+        text += macro("StressSymbolicLoophole", f"{100.0 * float(numbers['symbolic_proxy_loophole']):.1f}\\%")
+        text += macro("StressSymbolicSuccess", f"{100.0 * float(numbers['symbolic_proxy_success']):.1f}\\%")
+        text += macro("StressSimulatorUtility", f"{float(numbers['simulator_proxy_utility']):.1f}")
+        text += macro("StressAdversarialUtility", f"{float(numbers['adversarial_gate_utility']):.1f}")
+        text += macro("StressLCBUtility", f"{float(numbers['uncertainty_lcb_utility']):.1f}")
+        text += macro("StressRarePriorLoophole", f"{100.0 * float(numbers['rare_prior_symbolic_loophole']):.1f}\\%")
+        text += macro("StressStrictSuccess", f"{100.0 * float(numbers['strict_boundary_success']):.1f}\\%")
+        text += macro("StressProxyAdvantage", f"{float(numbers['loophole_proxy_advantage']):.1f}")
+        text += macro("StressGroundedAdvantage", f"{float(numbers['grounded_utility_advantage']):.1f}")
+    frozenlake_claims = ROOT / "results" / "frozenlake_benchmark" / "claims.json"
+    if frozenlake_claims.exists():
+        claims = json.loads(frozenlake_claims.read_text(encoding="utf-8"))
+        numbers = claims["key_numbers"]
+        text += macro("FrozenMaxN", str(numbers["max_n"]))
+        text += macro("FrozenNOneUtility", f"{float(numbers['n1_symbolic_utility']):.1f}")
+        text += macro("FrozenSymbolicUtility", f"{float(numbers['symbolic_utility']):.1f}")
+        text += macro("FrozenSymbolicSuccess", f"{100.0 * float(numbers['symbolic_success']):.1f}\\%")
+        text += macro("FrozenSymbolicHole", f"{100.0 * float(numbers['symbolic_enters_hole']):.1f}\\%")
+        text += macro("FrozenSimulatorUtility", f"{float(numbers['simulator_utility']):.1f}")
+        text += macro("FrozenHazardGateUtility", f"{float(numbers['hazard_gate_utility']):.1f}")
+        text += macro("FrozenHazardGateSuccess", f"{100.0 * float(numbers['hazard_gate_success']):.1f}\\%")
+        text += macro("FrozenLCBUtility", f"{float(numbers['uncertainty_lcb_utility']):.1f}")
+        text += macro("FrozenLCBSuccess", f"{100.0 * float(numbers['uncertainty_lcb_success']):.1f}\\%")
+        text += macro("FrozenHazardProxyAdvantage", f"{float(numbers['hazard_proxy_advantage']):.1f}")
+        text += macro("FrozenSafeUtilityAdvantage", f"{float(numbers['safe_utility_advantage']):.1f}")
     (PAPER / "results_macros.tex").write_text(text, encoding="utf-8")
 
 

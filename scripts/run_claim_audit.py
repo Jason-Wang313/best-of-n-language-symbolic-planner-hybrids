@@ -12,12 +12,16 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
 EXPANSION_CLAIMS = ROOT / "results" / "expansion" / "claims.json"
+FROZENLAKE_CLAIMS = ROOT / "results" / "frozenlake_benchmark" / "claims.json"
 PAPER = ROOT / "paper" / "main.tex"
-REPO_PDF = ROOT / "paper" / "final" / "best-of-n-language-symbolic-planner-hybrids-v3.pdf"
-DESKTOP_PDF = Path.home() / "OneDrive" / "Desktop" / "best-of-n-language-symbolic-planner-hybrids-v3.pdf"
+REPO_PDF = ROOT / "paper" / "final" / "best-of-n-language-symbolic-planner-hybrids-v4.pdf"
+DESKTOP_PDF = Path.home() / "OneDrive" / "Desktop" / "best-of-n-language-symbolic-planner-hybrids-v4.pdf"
 
 STALE_PATTERNS = [
     "best-of-n-language-symbolic-planner-hybrids-" + "v" + "2",
+    "best-of-n-language-symbolic-planner-hybrids-" + "v" + "3",
+    "submission-ready " + "v" + "3",
+    "v" + "3" + " filename",
     "best of n llm",
     "inference value theorem",
     "iclr_submission",
@@ -38,11 +42,14 @@ def main() -> None:
     args = parser.parse_args()
     failures: list[str] = []
     expansion: dict | None = None
+    frozenlake: dict | None = None
     summary_path = ROOT / "results" / args.preset / "summary.csv"
     if not summary_path.exists():
         raise FileNotFoundError(f"missing {summary_path}; run experiments first")
     if EXPANSION_CLAIMS.exists():
         expansion = json.loads(EXPANSION_CLAIMS.read_text(encoding="utf-8"))
+    if FROZENLAKE_CLAIMS.exists():
+        frozenlake = json.loads(FROZENLAKE_CLAIMS.read_text(encoding="utf-8"))
 
     summary = pd.read_csv(summary_path)
     max_n = int(summary["n"].max())
@@ -57,7 +64,7 @@ def main() -> None:
     best_repair = at_max.loc[best_repair_name]
 
     claims = {
-        "version": "v3",
+        "version": "v4",
         "preset": args.preset,
         "max_n": max_n,
         "claim_boundary": "controlled synthetic language/symbolic planner domains only",
@@ -86,7 +93,8 @@ def main() -> None:
             "claims that symbolic planning is intrinsically unsafe",
             "claims that semantic uncertainty penalties are a complete solution",
         ],
-        "v3_expansion": expansion,
+        "stress_expansion": expansion,
+        "frozenlake_benchmark": frozenlake,
     }
     out_json = ROOT / "docs" / "claims.json"
     out_md = ROOT / "docs" / "claim_audit.md"
@@ -94,19 +102,32 @@ def main() -> None:
     expansion_checks = expansion.get("checks", {}) if expansion else {}
     expansion_numbers = expansion.get("key_numbers", {}) if expansion else {}
     expansion_block = (
-        "## V3 Expansion Checks\n\n"
+        "## Expansion Checks\n\n"
         + "\n".join(f"- {key}: {value}" for key, value in expansion_checks.items())
-        + "\n\n## V3 Key Numbers\n\n"
+        + "\n\n## Expansion Key Numbers\n\n"
         + "\n".join(f"- {key}: {value}" for key, value in expansion_numbers.items())
         + "\n\n"
         if expansion
-        else "## V3 Expansion Checks\n\n- missing expansion claims\n\n"
+        else "## Expansion Checks\n\n- missing expansion claims\n\n"
+    )
+    frozenlake_checks = frozenlake.get("checks", {}) if frozenlake else {}
+    frozenlake_numbers = frozenlake.get("key_numbers", {}) if frozenlake else {}
+    frozenlake_block = (
+        "## FrozenLake Checks\n\n"
+        + "\n".join(f"- {key}: {value}" for key, value in frozenlake_checks.items())
+        + "\n\n## FrozenLake Key Numbers\n\n"
+        + "\n".join(f"- {key}: {value}" for key, value in frozenlake_numbers.items())
+        + "\n\n"
+        if frozenlake
+        else "## FrozenLake Checks\n\n- missing FrozenLake claims\n\n"
     )
     out_md.write_text(
         "# Claim Audit\n\n"
-        f"Version: `v3`. Baseline preset: `{args.preset}`. Baseline max N: `{max_n}`. "
-        f"Expansion max N: `{expansion_numbers.get('max_n', 'missing')}`.\n\n"
+        f"Version: `v4`. Baseline preset: `{args.preset}`. Baseline max N: `{max_n}`. "
+        f"Expansion max N: `{expansion_numbers.get('max_n', 'missing')}`. "
+        f"FrozenLake max N: `{frozenlake_numbers.get('max_n', 'missing')}`.\n\n"
         + expansion_block
+        + frozenlake_block
         + "## Baseline Supported Checks\n\n"
         + "\n".join(f"- {key}: {value}" for key, value in claims["supported"].items())
         + "\n\n## Baseline Key Numbers\n\n"
@@ -131,6 +152,15 @@ def main() -> None:
             if value is not True:
                 failures.append(f"expansion check failed: {name}={value}")
 
+    if frozenlake is None:
+        failures.append(f"missing FrozenLake claims: {FROZENLAKE_CLAIMS}")
+    else:
+        if frozenlake.get("claim_pass") is not True:
+            failures.append("FrozenLake claim_pass is false")
+        for name, value in frozenlake.get("checks", {}).items():
+            if value is not True:
+                failures.append(f"FrozenLake check failed: {name}={value}")
+
     if PAPER.exists():
         paper_text = PAPER.read_text(encoding="utf-8").lower()
         for pattern in STALE_PATTERNS:
@@ -153,7 +183,7 @@ def main() -> None:
             print(f"- {failure}")
         raise SystemExit(1)
 
-    print("submission audit complete: v3")
+    print("submission audit complete: v4")
 
 
 if __name__ == "__main__":

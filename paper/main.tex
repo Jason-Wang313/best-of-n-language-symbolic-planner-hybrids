@@ -11,8 +11,8 @@
 
 \hypersetup{
   colorlinks=true,
-  linkcolor=black,
-  citecolor=black,
+  linkcolor=blue!55!black,
+  citecolor=green!45!black,
   urlcolor=blue
 }
 
@@ -35,19 +35,24 @@ while failing hidden execution semantics that the abstraction omits. We build
 deterministic language-like planning domains with a compiler, coarse symbolic
 checker, surrogate simulator score, and stricter hidden executor. A finite-pool
 argument shows how rare boundary loopholes are amplified by proxy-ranked
-candidate selection. The v3 artifact adds high-budget stress to
-$N=\VThreeMaxN{}$, loophole-prior sweeps, repair ablations, strict-boundary
+candidate selection. The v4 artifact adds high-budget stress to
+$N=\StressMaxN{}$, loophole-prior sweeps, repair ablations, strict-boundary
 controls, candidate-level calibration, and failure-case exports. At
-$N=\VThreeMaxN{}$, symbolic-proxy selection has true utility
-\VThreeSymbolicUtility{}, execution success \VThreeSymbolicSuccess{}, and
-selected-loophole rate \VThreeSymbolicLoophole{}; simulator-proxy selection
-collapses to utility \VThreeSimulatorUtility{}. Adversarial gates and
-uncertainty lower-confidence selection recover utility \VThreeAdversarialUtility{}
-and \VThreeLCBUtility{} in the controlled domains. Even when the loophole prior
-is 0.04, proxy selection still chooses loopholes in \VThreeRarePriorLoophole{}
-of trials. The claim is intentionally narrow: this is a submission-ready audit
-protocol for boundary misspecification, not a claim about deployed robotics
-systems or a universal repair.
+$N=\StressMaxN{}$, symbolic-proxy selection has true utility
+\StressSymbolicUtility{}, execution success \StressSymbolicSuccess{}, and
+selected-loophole rate \StressSymbolicLoophole{}; simulator-proxy selection
+collapses to utility \StressSimulatorUtility{}. Adversarial gates and
+uncertainty lower-confidence selection recover utility \StressAdversarialUtility{}
+and \StressLCBUtility{} in the controlled domains. Even when the loophole prior
+is 0.04, proxy selection still chooses loopholes in \StressRarePriorLoophole{}
+of trials. The v4 artifact also adds a standard Gymnasium FrozenLake-v1
+benchmark tier: a coarse symbolic checker that ignores holes drives symbolic
+selection from utility \FrozenNOneUtility{} at $N=1$ to \FrozenSymbolicUtility{}
+at $N=\FrozenMaxN{}$ with \FrozenSymbolicHole{} hole entry, while a
+hazard-aware boundary gate recovers utility \FrozenHazardGateUtility{} and
+success \FrozenHazardGateSuccess{}. The claim is intentionally narrow: this is
+a submission-ready audit protocol for boundary misspecification, not a claim
+about deployed robotics systems or a universal repair.
 \end{abstract}
 
 \section{Introduction}
@@ -79,25 +84,29 @@ generic claim that all symbolic planning is unsafe. It is a boundary-contract
 claim: symbolic validity is only as strong as the semantics exposed to the
 symbolic layer.
 
-The repository initially contained a six-page mechanism note. The present v3
-paper turns that note into a fuller audit artifact. The v3 suite adds:
+The repository initially contained a six-page mechanism note. The present v4
+paper turns that note into a fuller audit artifact. The v4 suite adds:
 \begin{enumerate}
-  \item a high-budget stress test to $N=\VThreeMaxN{}$;
+  \item a high-budget stress test to $N=\StressMaxN{}$;
   \item loophole-prior sweeps testing whether rare boundary failures are
   amplified;
   \item strict-boundary controls and repair ablations;
   \item candidate-level proxy-versus-execution calibration;
-  \item selected failure-case exports; and
+  \item selected failure-case exports;
+  \item a standard FrozenLake-v1 hidden-execution benchmark tier; and
   \item a local claim audit that rejects stale short-paper builds.
 \end{enumerate}
 
-The main empirical result is simple and severe. At $N=\VThreeMaxN{}$,
+The main empirical result is simple and severe. At $N=\StressMaxN{}$,
 symbolic-proxy and simulator-proxy selection both choose boundary loopholes in
-\VThreeSymbolicLoophole{} of trials and have execution success
-\VThreeSymbolicSuccess{}. Boundary-aware repairs recover execution success in
+\StressSymbolicLoophole{} of trials and have execution success
+\StressSymbolicSuccess{}. Boundary-aware repairs recover execution success in
 this controlled setting. The strongest lesson is not that the repair is a
 deployment solution. The lesson is that language/symbolic hybrids should be
 audited under the same candidate-pool pressure used at inference time.
+The FrozenLake tier asks the same question on a recognized benchmark map:
+plans that look goal-reaching to a coarse checker may still fall into holes
+under the hidden environment dynamics.
 
 \section{Boundary Contracts}
 
@@ -206,17 +215,17 @@ paperwork-only delivery and service-elevator use. \texttt{uncertainty\_lcb}
 uses a lower confidence bound by subtracting uncertainty from the symbolic
 proxy.
 
-The v3 expansion adds repair ablations. Mark-only penalties target paperwork
+The v4 expansion adds repair ablations. Mark-only penalties target paperwork
 but not shortcuts. Shortcut-only penalties target service-elevator use but not
 paperwork. Packing penalties target missing physical preparation. A
 mark-plus-shortcut penalty removes visible loopholes but can still select
 unpacked semantic failures. A strict-boundary proxy requires checker validity,
 no paperwork goal completion, no shortcut transition, and explicit packing.
 
-\section{V3 Experimental Protocol}
+\section{v4 Experimental Protocol}
 
 The original full suite used 96 seeds, three tasks, budgets up to $N=128$, and
-seven selectors. The v3 suite adds four evidence blocks.
+seven selectors. The v4 suite adds four evidence blocks.
 
 \textbf{Budget stress.} We evaluate budgets
 $N \in \{1,2,4,8,16,32,64,128,256,512\}$ across the three tasks. This tests
@@ -243,7 +252,7 @@ and a machine-readable claim certificate.
 \section{Results: Budget Stress}
 
 Figure~\ref{fig:basecollapse} shows the original full-run scaling curves.
-Figure~\ref{fig:v3budget} extends the stress to $N=\VThreeMaxN{}$. The result is
+Figure~\ref{fig:v4budget} extends the stress to $N=\StressMaxN{}$. The result is
 not a small degradation. At $N=1$, all selectors average true utility 35.7,
 execution success 0.260, and loophole rate 0.281 because there is no selection
 choice. At $N=512$, symbolic-proxy and simulator-proxy selection both reach
@@ -286,9 +295,9 @@ utility as the candidate pool grows; repairs recover grounded execution.}
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{../figures/expansion/figure5_budget_512.png}
-\caption{v3 budget stress to $N=512$. Left: selected true utility. Right:
+\caption{v4 budget stress to $N=512$. Left: selected true utility. Right:
 selected loophole rate.}
-\label{fig:v3budget}
+\label{fig:v4budget}
 \end{figure}
 
 \section{Results: Rare Loophole Stress}
@@ -296,7 +305,7 @@ selected loophole rate.}
 A natural objection is that the generator emits too many loopholes. The
 loophole-prior sweep addresses this by lowering the combined proposal prior to
 0.04. At $N=512$, symbolic-proxy selection still chooses loopholes in
-\VThreeRarePriorLoophole{} of trials. This is the finite-pool law in action:
+\StressRarePriorLoophole{} of trials. This is the finite-pool law in action:
 rare candidate types can dominate selected outputs if their proxy scores occupy
 the upper tail.
 
@@ -380,8 +389,8 @@ over all candidates is only 0.076. More importantly, the candidate type with
 the highest proxy score is not executable: paperwork loopholes have mean proxy
 125.2 and hidden utility 15.9. Robust grounded plans have mean proxy 65.0 and
 hidden utility 84.6. The proxy advantage of loopholes over non-loopholes is
-\VThreeProxyAdvantage{}, while grounded executable plans exceed loopholes by
-\VThreeGroundedAdvantage{} utility points.
+\StressProxyAdvantage{}, while grounded executable plans exceed loopholes by
+\StressGroundedAdvantage{} utility points.
 
 \begin{table}[t]
 \centering
@@ -432,6 +441,66 @@ opportunities but also expose checker-valid semantic failures.}
 \label{fig:checker}
 \end{figure}
 
+\section{FrozenLake Standard Benchmark}
+
+The controlled domains isolate the language/symbolic boundary mechanism, but a
+reviewer can still ask whether the audit survives a recognized environment.
+The v4 artifact therefore adds a CPU-light benchmark tier using the standard
+Gymnasium FrozenLake-v1 8-by-8 map \citep{gymnasium}. Candidate plans are
+language-like direction lists compiled to actions. The coarse symbolic checker
+accepts any path whose endpoint is the goal when holes are ignored. The hidden
+executor uses the official deterministic FrozenLake map: if the path enters a
+hole, execution terminates with zero reward. This creates a real benchmark
+boundary contract: symbolic reachability is not the same as environment
+success.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{../figures/figure10_frozenlake_benchmark.png}
+\caption{FrozenLake-v1 boundary benchmark. Coarse symbolic and simulator
+proxies amplify checker-valid thin-ice paths as candidate budget grows, while
+hazard-aware boundary controls recover hidden environment success.}
+\label{fig:frozenlake}
+\end{figure}
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{rllrrr}
+\toprule
+$N$ & Selector & Utility & Success & Hole entry & Gap \\
+\midrule
+1 & symbolic proxy & 40.1 & 0.431 & 0.388 & 20.9 \\
+16 & symbolic proxy & 1.2 & 0.013 & 0.988 & 108.5 \\
+128 & symbolic proxy & 0.0 & 0.000 & 1.000 & 110.3 \\
+128 & simulator proxy & 0.0 & 0.000 & 1.000 & 110.3 \\
+128 & random valid & 52.9 & 0.569 & 0.431 & 43.9 \\
+128 & hazard gate & 93.0 & 1.000 & 0.000 & -4.7 \\
+128 & uncertainty LCB & 93.0 & 1.000 & 0.000 & -4.7 \\
+\bottomrule
+\end{tabular}
+\caption{FrozenLake-v1 hidden-execution benchmark over 160 candidate pools.
+The benchmark is not used as a leaderboard; it is a standard environment test
+of the same boundary failure.}
+\label{tab:frozenlake}
+\end{table}
+
+Table~\ref{tab:frozenlake} and Figure~\ref{fig:frozenlake} show the same
+selected-tail pathology outside the synthetic delivery domains. At $N=1$,
+symbolic selection has mean hidden utility \FrozenNOneUtility{} because there
+is almost no selection pressure. At $N=\FrozenMaxN{}$, symbolic and simulator
+proxy selection both enter holes in \FrozenSymbolicHole{} of trials and reach
+hidden utility \FrozenSymbolicUtility{}. The boundary-aware gate and
+uncertainty lower-confidence selector use only map-visible hazard structure;
+they do not read the final success label. They recover utility
+\FrozenHazardGateUtility{} and \FrozenLCBUtility{} with success
+\FrozenHazardGateSuccess{} and \FrozenLCBSuccess{}, respectively.
+
+This benchmark is intentionally modest. It is not a claim of state-of-the-art
+FrozenLake planning, because the goal is not to solve FrozenLake. The goal is
+to show that the audit is meaningful on a standard environment whose hidden
+execution dynamics can invalidate a coarse symbolic reachability certificate.
+
 \section{Related Work}
 
 Language-to-planning systems connect large language models with classical
@@ -442,6 +511,8 @@ Self-consistency and tree search show that inference-time candidate pools can
 improve reasoning when the scoring signal is aligned \citep{selfconsistency,tot}.
 Reward-model overoptimization and reward tampering show the opposite side:
 optimizing an imperfect proxy can expose misspecification \citep{gao,everitt}.
+Gymnasium and PDDLGym provide standard environment interfaces for testing
+planning and reinforcement-learning systems \citep{gymnasium,pddlgym}.
 
 This paper is narrower than those lines. It does not propose a new planner or a
 new agent architecture. It isolates a boundary contract in language/symbolic
@@ -451,11 +522,13 @@ controlled failure mechanism.
 
 \section{Limitations}
 
-The domains are synthetic and intentionally small. The language generator is a
-template sampler, not a frontier model. The simulator proxy is hand-built to
-expose a mechanism. The repair gates use visible boundary features and should
-be read as diagnostics, not deployment-ready safety tools. The paper does not
-evaluate real robots, real PDDL stacks, or learned simulators.
+The main language/symbolic domains are synthetic and intentionally small. The
+FrozenLake tier adds a recognized benchmark environment, but it is still a
+toy-text map rather than a real robot, learned simulator, or frontier language
+planner. The language generator is a template sampler, not a frontier model.
+The simulator proxy is hand-built to expose a mechanism. The repair gates use
+visible boundary features and should be read as diagnostics, not
+deployment-ready safety tools.
 
 These limitations are serious, but they are also useful. Because the domains
 are controlled, every selected failure can be traced to a compiled action and a
@@ -466,9 +539,10 @@ models, real planners, hidden test tasks, and human or physical evaluation.
 
 Plans can pass a symbolic checker and still fail execution. When the proxy
 rewards the missing boundary condition, candidate-pool selection amplifies the
-wrong plans. In the v3 audit, symbolic and simulator proxy selection collapse
-at $N=\VThreeMaxN{}$, even under rare-loophole stress. Boundary-aware repairs
-recover the toy domains, but the main result is the audit requirement: a
+wrong plans. In the v4 audit, symbolic and simulator proxy selection collapse
+at $N=\StressMaxN{}$, even under rare-loophole stress, and the same audit
+pattern appears on FrozenLake-v1. Boundary-aware repairs recover these
+diagnostics, but the main result is the audit requirement: a
 language/symbolic planning stack should measure selected-plan execution under
 the same candidate budget used by deployment.
 
@@ -526,7 +600,8 @@ The artifact is CPU-only. The intended reproduction path is:
   \item install the package in editable mode;
   \item run the unit tests;
   \item run the original full suite;
-  \item run the v3 expansion suite;
+  \item run the v4 expansion suite;
+  \item run the FrozenLake benchmark tier;
   \item build the paper; and
   \item run the claim audit.
 \end{enumerate}
@@ -538,31 +613,30 @@ python -m pytest -q
 python experiments\run_suite.py --preset full
 python experiments\run_expansion_suite.py --mode full
   --output results\expansion
+python -m experiments.run_frozenlake_benchmark
 python scripts\build_paper.py
 python scripts\run_claim_audit.py
 \end{verbatim}
 
-The v3 expansion writes \texttt{expanded\_trials.csv},
-\texttt{expanded\_summary.csv}, \texttt{candidate\_diagnostics.csv},
-\texttt{candidate\_correlation\_summary.csv}, \texttt{failure\_cases.csv}, and
-\texttt{claims.json}. Figures are copied to both the expansion results folder
-and the paper figure folder.
+The v4 expansion writes the expanded trials, summaries, candidate diagnostics,
+correlation summaries, failure cases, and claim certificate. Figures are copied
+to both the expansion results folder and the paper figure folder. The
+FrozenLake command writes its benchmark result directory and figure file; its
+claim certificate is checked by the final audit.
 
 \section{Result Ledger}
 
-The central claim is supported by multiple artifacts. Budget collapse is shown
-by \texttt{figure5\_budget\_512.png} and \texttt{expanded\_summary.csv}.
-Rare-loophole amplification is shown by \texttt{figure6\_loophole\_prior.png}.
-Repair sensitivity is shown by \texttt{figure7\_repair\_ablation.png}.
-Candidate calibration is shown by \texttt{figure8\_proxy\_calibration.png} and
-\texttt{candidate\_correlation\_summary.csv}. Checker/executor divergence is
-shown by \texttt{figure9\_checker\_executor\_gap.png}. Machine-readable claim
-status is stored in \texttt{claims.json}.
+The central claim is supported by multiple artifacts. Budget collapse,
+rare-loophole amplification, repair sensitivity, candidate calibration, and
+checker/executor divergence each have a figure and CSV summary in the expansion
+outputs. Machine-readable claim status is stored in the expansion claim
+certificate. The standard benchmark tier has its own FrozenLake figure, result
+CSVs, and claim certificate.
 
-The claim audit requires all expansion checks to pass, rejects stale v2 paper
-names, and requires both repository and Desktop PDFs to have at least 25 pages.
-This prevents a successful code run from being confused with a complete
-submission artifact.
+The claim audit requires all expansion and FrozenLake checks to pass, rejects
+stale earlier paper names, and requires both repository and Desktop PDFs to
+have at least 25 pages. This prevents a successful code run from being
+confused with a complete submission artifact.
 
 \section{Failure-Case Interpretation}
 
@@ -647,8 +721,10 @@ controlled collapse is caused by the missing boundary semantics we identify.
 
 \section{Reviewer Attack Matrix}
 
-\textbf{The task is synthetic.} Yes. The paper is a mechanism audit, not a
-robotics benchmark. The synthetic design makes the boundary gap inspectable.
+\textbf{The task is synthetic.} Partly. The main language/symbolic domains are
+controlled mechanism domains, which makes the boundary gap inspectable. The v4
+artifact also adds a standard FrozenLake-v1 tier, but the claim remains an
+audit claim rather than a robotics claim.
 
 \textbf{The model bakes in the loophole.} Yes, deliberately. The goal is not to
 discover an accidental bug; it is to test whether proxy-ranked selection
@@ -662,10 +738,11 @@ packing. It does not read the hidden execution label.
 more specific: language-to-symbolic boundary compilation, checker validity,
 and hidden execution semantics.
 
-\textbf{The evidence is too small.} The v3 artifact adds N=512 stress,
+\textbf{The evidence is too small.} The v4 artifact adds N=512 stress,
 loophole-prior sweeps, repair ablations, candidate diagnostics, failure cases,
-and a 25-page submission manuscript. The remaining limitation is the absence
-of trained real-world checkpoints, not lack of a controlled audit.
+a standard FrozenLake-v1 benchmark tier, and a 25-page submission manuscript.
+The remaining limitation is the absence of trained real-world checkpoints, not
+lack of a controlled audit.
 
 \section{Why This Is Not A Duplicate Wrapper}
 
@@ -704,11 +781,11 @@ calibration tricks. The limitations call for real language/planning stacks.
 
 \section{Submission Checklist}
 
-The finalizer checks that the v3 expansion claim file passes, the paper builds
-to at least 25 pages, the repository and Desktop PDFs have the v3 filename, the
-LaTeX log has no fatal errors or unresolved citations, the source map points to
-the correct repository, and the GitHub branch is pushed after the final PDF is
-generated.
+The finalizer checks that the expansion and FrozenLake claim files pass, the
+paper builds to at least 25 pages, the repository and Desktop PDFs have the v4
+filename, the LaTeX log has no fatal errors or unresolved citations, the source
+map points to the correct repository, and the GitHub branch is pushed after the
+final PDF is generated.
 
 \section{Extended Domain Traces}
 
@@ -831,7 +908,7 @@ The $N=1$ row is a useful sanity check. All selectors see the same one
 candidate, so their means agree. Differences appear only when selection has a
 choice. By $N=128$, the proxy selectors have already collapsed to loophole rate
 1.0. Extending to $N=512$ tests whether this is a transient budget artifact. It
-is not: the collapse remains exact in the v3 run.
+is not: the collapse remains exact in the v4 run.
 
 The proxy-true gap should be interpreted carefully. A negative gap for repaired
 selectors means the proxy score is lower than hidden utility; this is not a
@@ -846,7 +923,7 @@ failure depends on a generator that emits loopholes too often. At a prior of
 0.04, a single draw rarely produces a loophole. At $N=512$, the probability
 that at least one loophole appears is high. If the proxy ranks loopholes above
 grounded plans, selection converts a rare proposal type into a common final
-output. The v3 result shows complete amplification in this controlled setting.
+output. The v4 result shows complete amplification in this controlled setting.
 
 This has a practical consequence. A system designer might inspect samples and
 conclude that boundary failures are rare. That conclusion can be false for the
@@ -874,7 +951,7 @@ The full-boundary penalty is the most honest diagnostic repair because it
 penalizes paperwork, shortcut transitions, missing packing, and declarations.
 The strict-boundary proxy goes further by filtering for checker-valid,
 packed, non-shortcut, non-paperwork plans. Both recover execution success in
-the v3 domains. This does not prove that a real system can always define such
+the v4 domains. This does not prove that a real system can always define such
 features. It proves that the controlled collapse is caused by the boundary
 features the paper identifies.
 
@@ -883,7 +960,7 @@ features the paper identifies.
 The candidate calibration plot is not a standard reliability diagram. It is a
 tail-local audit. The question is not whether proxy score has any information.
 The question is which candidate modes occupy the score tail from which the
-selector chooses. In the v3 diagnostic, paperwork loopholes occupy the highest
+selector chooses. In the v4 diagnostic, paperwork loopholes occupy the highest
 symbolic-proxy region, simulator lures occupy high simulator-proxy regions, and
 robust grounded plans sit below them despite high hidden utility.
 
@@ -896,7 +973,7 @@ candidates and inspect the selected quantiles.
 
 \section{Failure Taxonomy}
 
-The v3 failure cases fall into four groups. The first is paperwork-only
+The v4 failure cases fall into four groups. The first is paperwork-only
 completion: the plan creates an administrative record and never moves the
 object. The second is unsafe shortcut reachability: the plan uses a certified
 transition but bypasses PPE or safe routing. The third is simulator lure:
@@ -929,7 +1006,7 @@ audit is not yet diagnosing the boundary.
 
 \section{Replicate Accounting}
 
-The v3 full suite uses a CPU-light configuration because the benchmark is
+The v4 full suite uses a CPU-light configuration because the benchmark is
 designed for local reproducibility. The effects are large: proxy loophole rate
 is 1.0, repair loophole rate is 0.0, and repair execution success is 1.0 in
 the high-budget conditions. The suite therefore emphasizes breadth of stress
@@ -967,7 +1044,7 @@ is about compute applied to a misaligned proxy tail.
 \begin{enumerate}
   \item Could the result be a parser bug? Unit tests cover parser/checker cases.
   \item Could it be a random seed artifact? The collapse is exact at high
-  budget in the v3 suite.
+  budget in the v4 suite.
   \item Could it disappear when loopholes are rare? The 0.04 prior row still
   collapses.
   \item Could a single repair feature solve everything? No; ablations show
@@ -980,7 +1057,7 @@ is about compute applied to a misaligned proxy tail.
   explicit.
   \item Could the paper look like a duplicate wrapper? The entire artifact is
   boundary-planning specific.
-  \item Could the final PDF be stale? The build and claim audit enforce v3
+  \item Could the final PDF be stale? The build and claim audit enforce v4
   filenames and page count.
   \item Could a fresh agent find the source? The Desktop source map points to
   the source folder and GitHub repo.
@@ -1076,9 +1153,9 @@ repair & mark + shortcut & 44.6 & 0.000 & 0.000 \\
 repair & full boundary & 84.6 & 1.000 & 0.000 \\
 \bottomrule
 \end{tabular}
-\caption{Compact v3 evidence table. The rows mix budget, rare-prior, and
+\caption{Compact v4 evidence table. The rows mix budget, rare-prior, and
 repair-ablation views of the same boundary mechanism.}
-\label{tab:compactv3}
+\label{tab:compactv4}
 \end{table}
 
 The table also clarifies why loophole rate alone is not enough. The
@@ -1293,7 +1370,7 @@ execution, and candidate-pool selection concentrates checker-valid semantic
 failures. The paper should be evaluated as a mechanism artifact.
 
 The same reviewer might score empirical strength as limited because there are
-no real model checkpoints. That criticism is fair. The v3 paper compensates by
+no real model checkpoints. That criticism is fair. The v4 paper compensates by
 making the controlled artifact unusually complete: high-budget stress,
 rare-prior stress, repair ablations, candidate calibration, failure cases,
 claim audits, and a reproducibility path. The right score depends on venue
@@ -1337,7 +1414,7 @@ shows amplification; the rare-prior sweep shows the effect persists when
 loopholes are uncommon; the repair ablation shows which boundary features
 matter; candidate calibration shows that proxy score is high exactly where
 hidden utility is low; and the claim audit verifies that the final PDF and
-results correspond to this v3 artifact.
+results correspond to this v4 artifact.
 
 This chain is intentionally redundant. Each link answers a different attack.
 The proof answers whether the mechanism is coherent. The budget curve answers
@@ -1418,7 +1495,7 @@ a higher-stakes system.
   \item Does it explain hidden executor state? Yes.
   \item Does it separate semantic-bad from loophole? Yes.
   \item Does it preserve a narrow claim boundary? Yes.
-  \item Does it update build output to v3? Yes.
+  \item Does it update build output to v4? Yes.
   \item Does the audit require 25 pages? Yes.
   \item Does the audit require expansion claims? Yes.
   \item Does the repo include generated CSVs? Yes.
@@ -1455,9 +1532,9 @@ a higher-stakes system.
 The repository treats the paper, code, generated results, figures, claim audit,
 and Desktop filename as one artifact. This matters because a paper can be
 scientifically improved while the visible PDF remains stale, or a result file
-can be regenerated while the manuscript still reports old numbers. The v3
+can be regenerated while the manuscript still reports old numbers. The v4
 workflow therefore makes the build script write both a repository final PDF and
-a Desktop final PDF with the same v3 name. The claim audit then checks the
+a Desktop final PDF with the same v4 name. The claim audit then checks the
 expansion claim file and the page count of both PDFs.
 
 The artifact governance rule is simple: a result is not final until it is
@@ -1471,14 +1548,14 @@ The governance layer is not bureaucracy. It is part of scientific rigor for a
 collection of related papers. When several projects study candidate-pool
 selection, stale filenames and shared templates create review risk. The
 artifact must make its identity obvious: this repository is the
-language-to-symbolic planning boundary audit, and its final output is the v3
+language-to-symbolic planning boundary audit, and its final output is the v4
 submission PDF.
 
 \section*{Appendix AT: Minimal Reviewer Reproduction}
 
 A reviewer can reproduce the central claim without reading every file. First,
 run the tests to verify that the compiler, checker, executor, selector, and
-expansion suite behave deterministically. Second, run the v3 expansion suite.
+expansion suite behave deterministically. Second, run the v4 expansion suite.
 Third, open the expansion claim file and confirm that all six checks are true.
 Fourth, inspect the budget rows at $N=512$: symbolic and simulator proxy
 selection should have utility 15.9, success 0.0, and loophole rate 1.0. Fifth,
@@ -1542,7 +1619,7 @@ executor oracle before interpreting larger candidate pools as better planning.}
 This template also separates engineering fixes from scientific claims. Adding a
 stricter checker is an engineering fix only after the executor oracle has shown
 which hidden conditions matter. Penalizing one known shortcut is not equivalent
-to repairing the boundary; the v3 ablations show that single-feature repairs can
+to repairing the boundary; the v4 ablations show that single-feature repairs can
 leave success at zero. Conversely, a repair that looks conservative in the
 symbolic layer can be beneficial if it removes selected-tail loopholes while
 preserving grounded plans. The paper therefore reports both the proxy score and
@@ -1578,7 +1655,7 @@ has not made the boundary auditable. In that case, increasing $N$, adding
 self-consistency, or sampling more fluent plans is not evidence of safer
 planning. It is more pressure on an unmeasured interface.
 
-\begin{thebibliography}{12}
+\begin{thebibliography}{13}
 \bibitem[Liu et~al.(2023)]{llmp}
 Liu et al. LLM+P: Empowering Large Language Models with Optimal Planning
 Proficiency. arXiv, 2023.
@@ -1614,6 +1691,9 @@ TMLR, 2023.
 \bibitem[Silver and Chitnis(2020)]{pddlgym}
 Silver and Chitnis. PDDLGym: Gym Environments from PDDL Problems. ICAPS
 Workshop, 2020.
+\bibitem[Towers et~al.(2024)]{gymnasium}
+Towers et al. Gymnasium: A Standard Interface for Reinforcement Learning
+Environments. arXiv, 2024.
 \end{thebibliography}
 
 \end{document}

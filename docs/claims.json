@@ -1,5 +1,5 @@
 {
-  "version": "v3",
+  "version": "v4",
   "preset": "full",
   "max_n": 128,
   "claim_boundary": "controlled synthetic language/symbolic planner domains only",
@@ -28,7 +28,7 @@
     "claims that symbolic planning is intrinsically unsafe",
     "claims that semantic uncertainty penalties are a complete solution"
   ],
-  "v3_expansion": {
+  "stress_expansion": {
     "mode": "full",
     "claim_pass": true,
     "checks": {
@@ -51,6 +51,33 @@
       "strict_boundary_success": 1.0,
       "loophole_proxy_advantage": 68.987,
       "grounded_utility_advantage": 60.61
+    }
+  },
+  "frozenlake_benchmark": {
+    "benchmark": "FrozenLake-v1",
+    "map_name": "8x8",
+    "claim_pass": true,
+    "checks": {
+      "frozenlake_symbolic_enters_holes": true,
+      "frozenlake_simulator_enters_holes": true,
+      "frozenlake_true_utility_drops": true,
+      "frozenlake_hazard_gate_recovers": true,
+      "frozenlake_lcb_recovers": true,
+      "frozenlake_proxy_tail_mismatch": true
+    },
+    "key_numbers": {
+      "max_n": 128,
+      "n1_symbolic_utility": 40.106,
+      "symbolic_utility": 0.0,
+      "symbolic_success": 0.0,
+      "symbolic_enters_hole": 1.0,
+      "simulator_utility": 0.0,
+      "hazard_gate_utility": 93.0,
+      "hazard_gate_success": 1.0,
+      "uncertainty_lcb_utility": 93.0,
+      "uncertainty_lcb_success": 1.0,
+      "hazard_proxy_advantage": 22.137,
+      "safe_utility_advantage": 93.0
     }
   }
 }

@@ -1,4 +1,4 @@
-"""V3 expansion suite for symbolic-boundary planner audits."""
+"""Expansion suite for symbolic-boundary planner audits."""
 
 from __future__ import annotations
 
