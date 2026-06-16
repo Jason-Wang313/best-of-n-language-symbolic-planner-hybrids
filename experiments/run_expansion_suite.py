@@ -11,7 +11,7 @@ from typing import Callable, Dict, Iterable, List, Sequence
 
 import matplotlib
 
-matplotlib.use("Agg")
+matplotlib.use("Agg", force=True)
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -740,7 +740,7 @@ def plot_checker_gap(summary: pd.DataFrame, out_dir: Path) -> None:
 def run_suite(mode: str, output: Path) -> Dict[str, object]:
     config = suite_config(mode)
     output.mkdir(parents=True, exist_ok=True)
-    fig_dir = ROOT / "figures" / "expansion"
+    fig_dir = ROOT / "figures" / "expansion" if output.resolve() == (ROOT / "results" / "expansion").resolve() else output / "figures"
     fig_dir.mkdir(parents=True, exist_ok=True)
 
     budget = run_budget_stress(config)

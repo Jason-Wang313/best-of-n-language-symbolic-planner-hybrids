@@ -92,6 +92,9 @@ short builds.
 - Claim audit: `python scripts\run_claim_audit.py`.
 - Paper build: `python scripts\build_paper.py`.
 - Final PDF page count: 26 pages.
+- Final PDF SHA256:
+  `EC54B42F626322955441E34D56327A3D80727EBA8F751BC906D2E9865C38BD4A`
+- Visual QA inspected rendered pages 1, 7, 9, 20, and 26.
 
 ## Final PDF Path
 

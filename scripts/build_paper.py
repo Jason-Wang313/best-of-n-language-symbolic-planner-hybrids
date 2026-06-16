@@ -100,30 +100,50 @@ def run_latex() -> Path:
         path = PAPER / pattern
         if path.exists():
             path.unlink()
-    commands = [
-        ["latexmk", "-pdf", "-interaction=nonstopmode", "-halt-on-error", "main.tex"],
-        ["pdflatex", "-interaction=nonstopmode", "-halt-on-error", "main.tex"],
-    ]
+
+    def run_command(command: list[str]) -> None:
+        subprocess.run(command, cwd=PAPER, check=True, text=True, capture_output=True)
+
+    def format_error(exc: subprocess.CalledProcessError) -> str:
+        return f"{' '.join(exc.cmd)}\nSTDOUT:\n{exc.stdout}\nSTDERR:\n{exc.stderr}"
+
+    def run_pdflatex_cycle() -> None:
+        if shutil.which("pdflatex") is None:
+            raise FileNotFoundError("pdflatex not found")
+        run_command(["pdflatex", "-interaction=nonstopmode", "-halt-on-error", "main.tex"])
+        aux = PAPER / "main.aux"
+        needs_bibtex = aux.exists() and "\\bibdata" in aux.read_text(encoding="utf-8", errors="ignore")
+        if needs_bibtex and shutil.which("bibtex") is not None:
+            run_command(["bibtex", "main"])
+        run_command(["pdflatex", "-interaction=nonstopmode", "-halt-on-error", "main.tex"])
+        run_command(["pdflatex", "-interaction=nonstopmode", "-halt-on-error", "main.tex"])
+
     errors = []
-    for command in commands:
-        exe = shutil.which(command[0])
-        if exe is None:
-            errors.append(f"{command[0]} not found")
-            continue
-        try:
-            subprocess.run(command, cwd=PAPER, check=True, text=True, capture_output=True)
-            if command[0] == "pdflatex":
-                subprocess.run(command, cwd=PAPER, check=True, text=True, capture_output=True)
-            pdf = PAPER / "main.pdf"
-            if pdf.exists():
-                local_pdf = PAPER / "best-of-n-language-symbolic-planner-hybrids.pdf"
-                shutil.copy2(pdf, local_pdf)
-                REPO_FINAL.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copy2(pdf, REPO_FINAL)
-                shutil.copy2(pdf, DESKTOP_PDF)
-                return DESKTOP_PDF
-        except subprocess.CalledProcessError as exc:
-            errors.append(f"{' '.join(command)}\nSTDOUT:\n{exc.stdout}\nSTDERR:\n{exc.stderr}")
+    try:
+        if shutil.which("latexmk") is not None:
+            try:
+                run_command(["latexmk", "-pdf", "-interaction=nonstopmode", "-halt-on-error", "main.tex"])
+            except subprocess.CalledProcessError as exc:
+                errors.append(format_error(exc))
+                run_pdflatex_cycle()
+        else:
+            run_pdflatex_cycle()
+        pdf = PAPER / "main.pdf"
+        if pdf.exists():
+            local_pdf = PAPER / "best-of-n-language-symbolic-planner-hybrids.pdf"
+            shutil.copy2(pdf, local_pdf)
+            REPO_FINAL.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(pdf, REPO_FINAL)
+            shutil.copy2(pdf, DESKTOP_PDF)
+            pdf.unlink(missing_ok=True)
+            (ROOT / "docs" / "paper_build_failure.md").unlink(missing_ok=True)
+            return DESKTOP_PDF
+    except (subprocess.CalledProcessError, FileNotFoundError) as exc:
+        if isinstance(exc, subprocess.CalledProcessError):
+            errors.append(format_error(exc))
+        else:
+            errors.append(str(exc))
+
     failure = ROOT / "docs" / "paper_build_failure.md"
     failure.write_text("# Paper Build Failure\n\n" + "\n\n".join(errors), encoding="utf-8")
     raise RuntimeError(f"paper build failed; see {failure}")
