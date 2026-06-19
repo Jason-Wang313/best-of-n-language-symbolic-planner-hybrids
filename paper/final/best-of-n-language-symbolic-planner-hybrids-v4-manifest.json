@@ -4,9 +4,9 @@
   "github_remote": "https://github.com/Jason-Wang313/best-of-n-language-symbolic-planner-hybrids.git",
   "repository_pdf": "paper/final/best-of-n-language-symbolic-planner-hybrids-v4.pdf",
   "desktop_pdf": "C:\\Users\\wangz\\OneDrive\\Desktop\\best-of-n-language-symbolic-planner-hybrids-v4.pdf",
-  "sha256": "EC54B42F626322955441E34D56327A3D80727EBA8F751BC906D2E9865C38BD4A",
+  "sha256": "EE2CBCAF42F24C5D2E3DBC135BF0F9BC04E5C32DBEDD6A697C927A82865AE1C3",
   "pages": 26,
-  "verified_on": "2026-06-16",
+  "verified_on": "2026-06-19",
   "checks": {
     "compileall": "passed",
     "pytest": "10 passed",
@@ -16,7 +16,8 @@
     "claim_audit": "submission audit complete: v4",
     "latex_final_log_scan": "passed",
     "repo_desktop_hash_match": true,
-    "pdf_render": "all 26 pages rendered",
-    "visual_qa": "pages 1, 7, 9, 20, and 26 inspected"
+    "pdf_annotation_link_audit": "31 annotations: 26 green citation boxes, 5 red internal-reference boxes; all use 1pt visible borders",
+    "pdf_render": "selected high-risk pages rendered at moderate DPI",
+    "visual_qa": "pages 1, 4, 6, 7, 8, 9, 20, and 26 inspected"
   }
 }

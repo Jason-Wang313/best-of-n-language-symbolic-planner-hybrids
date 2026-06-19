@@ -79,7 +79,7 @@ synthetic domains.
 ## Submission-Readiness Judgment
 
 Submission-ready v4 as a controlled mechanism and audit-protocol paper. The
-manuscript is a 25-page anonymous PDF with substantial experiments, figures,
+manuscript is a 26-page anonymous PDF with substantial experiments, figures,
 appendices, failure-case exports, and a local claim audit that rejects stale
 short builds.
 
@@ -93,8 +93,11 @@ short builds.
 - Paper build: `python scripts\build_paper.py`.
 - Final PDF page count: 26 pages.
 - Final PDF SHA256:
-  `EC54B42F626322955441E34D56327A3D80727EBA8F751BC906D2E9865C38BD4A`
-- Visual QA inspected rendered pages 1, 7, 9, 20, and 26.
+  `EE2CBCAF42F24C5D2E3DBC135BF0F9BC04E5C32DBEDD6A697C927A82865AE1C3`
+- PDF annotation audit found 31 link annotations: 26 green citation boxes and
+  5 red internal-reference boxes. All annotations use 1pt visible borders
+  matching the VLA role-model profile.
+- Visual QA inspected rendered pages 1, 4, 6, 7, 8, 9, 20, and 26.
 
 ## Final PDF Path
 
